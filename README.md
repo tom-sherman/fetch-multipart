@@ -22,6 +22,8 @@ Conceptually multipart bodies are comprised of one or more "fields". Each field 
 
 `Field` shares many properties and methods with `Response` eg. `.json()`, `.text()`, `.blob()`. You can also access the underlying stream via `.body` just as you would do with a `Response`.
 
+You can also handle nested multipart bodies by calling the `.multipart()` method.
+
 ## Usage
 
 Here's an example use case with the Service Workers API (eg. Cloudflare Workers):
