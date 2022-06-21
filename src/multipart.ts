@@ -19,7 +19,7 @@ export async function* multipart(
   }
 
   const contentType = input.headers.get("content-type");
-  if (!contentType?.startsWith("multipart/form-data")) {
+  if (!contentType?.toLowerCase().startsWith("multipart/")) {
     throw new Error("Failed to fetch");
   }
 

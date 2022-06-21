@@ -2,7 +2,7 @@
 
 > **This libary is very WIP. It doesn't quite work yet...**
 
-Standards-inspired `multipart/form-data` parsing. It's like `response.text()` but for multipart bodies!
+Standards-inspired `multipart/*` parsing. It's like `response.text()` but for multipart bodies!
 
 ## API
 
@@ -36,10 +36,23 @@ addEventListener("fetch", (event) => {
 
 async function handleRequest(request) {
   for await (const field of multipart(request)) {
-    const name = field.headers.get("name");
+    const name = headerValue(field.headers.get("Content-Disposition"), "name");
     await uploadImageToStorage(name, field.body);
   }
 
   return new Response("OK")
+}
+
+// Extract a value from a string like "foo=bar; baz=buz"
+function headerValue(header, valueKey) {
+  const entries = header.split(";");
+
+  for (const entry of entries) {
+    const [key, value] = entry.trim().split("=");
+
+    if (value && valueKey == key) {
+      return value;
+    }
+  }
 }
 ```
