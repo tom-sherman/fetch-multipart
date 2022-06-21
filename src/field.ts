@@ -1,3 +1,4 @@
+import { multipart } from "./multipart.js";
 import { concatBytes } from "./util.js";
 
 export interface FieldInit {
@@ -110,5 +111,9 @@ export class Field implements Body {
   public async formData(): Promise<FormData> {
     // TODO: Implement
     throw new Error("Not implemented");
+  }
+
+  public multipart() {
+    return multipart(this);
   }
 }
