@@ -4,6 +4,12 @@
 
 Standards-inspired `multipart/*` parsing. It's like `response.text()` but for multipart bodies!
 
+## Goals
+
+- 100% standards compliant and isomorphic. Use it in the browser, Cloudflare Workers, Deno, and whatever new JS environment was created last week
+- Support all multipart bodies: `multipart/form-data`, `multipart/mixed`, `multipart/digest`, and `multipart/parallel`
+- Support nested multipart bodies
+
 ## API
 
 ### `multipart(input: MultipartInput): AsyncGenerator<Field>>`
@@ -58,3 +64,9 @@ function headerValue(header, valueKey) {
   }
 }
 ```
+
+## Prior art
+
+- https://github.com/mscdex/busboy
+- https://github.com/deligenius/multiparser
+- https://github.com/maraisr/meros
