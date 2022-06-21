@@ -23,6 +23,12 @@ export class Field implements Body {
       return new Field(this.body, this);
     }
 
+    if (this.bodyUsed) {
+      throw new Error(
+        "Failed to execute 'clone' on 'Field': Response body is already used"
+      );
+    }
+
     const [newBody, clonedBody] = this.body.tee();
     this.body = newBody;
     return new Field(clonedBody, this);
@@ -63,6 +69,12 @@ export class Field implements Body {
   }
 
   public async text() {
+    if (this.bodyUsed) {
+      throw new Error(
+        "Failed to execute 'text' on 'Field': Response body is already used"
+      );
+    }
+
     const buf = await this.arrayBuffer();
     const contentType = this.headers.get("content-type");
     const charset = contentType
@@ -72,11 +84,23 @@ export class Field implements Body {
   }
 
   public async json() {
+    if (this.bodyUsed) {
+      throw new Error(
+        "Failed to execute 'json' on 'Field': Response body is already used"
+      );
+    }
+
     const text = await this.text();
     return JSON.parse(text);
   }
 
   public async blob() {
+    if (this.bodyUsed) {
+      throw new Error(
+        "Failed to execute 'blob' on 'Field': Response body is already used"
+      );
+    }
+
     const buf = await this.arrayBuffer();
     return new Blob([buf], {
       type: this.headers.get("content-type") ?? undefined,
