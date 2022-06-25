@@ -29,4 +29,4 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      - run: deno test ./test/**/*.test.ts
+      - run: deno task buildNpm
