@@ -19,6 +19,7 @@ jobs:
       - run: deno test
 
   Node-Test:
+    needs: [Deno-Test]
     runs-on: ubuntu-latest
     steps:
       - uses: denoland/setup-deno@v1
