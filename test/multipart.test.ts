@@ -9,9 +9,9 @@ async function collectAll<T>(iterator: AsyncIterable<T>): Promise<T[]> {
   return result;
 }
 
-Deno.test(
-  "works with response and simple formdata",
-  async () => {
+Deno.test({
+  name: "works with response and simple formdata",
+  fn: async () => {
     const fd = new FormData();
     fd.set("foo", "bar");
     const response = new Response(fd);
@@ -20,4 +20,5 @@ Deno.test(
     console.log("hello?");
     assertEquals(parts.length, 1);
   },
-);
+  ignore: true,
+});
