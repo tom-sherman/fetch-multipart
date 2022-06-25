@@ -9,6 +9,6 @@
   "tasks": {
     "check": "deno check src/mod.ts",
     "buildNpm": "deno run --allow-all scripts/buildNpm.ts",
-    "test": "deno test ./test/**/*.test.ts"
+    "test": "deno test \"./test/**/*.test.ts\""
   }
 }
