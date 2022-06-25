@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "std/bytes": "https://deno.land/std@0.145.0/bytes/mod.ts",
+    "std/testing/asserts": "https://deno.land/std@0.145.0/testing/asserts.ts"
+  }
+}

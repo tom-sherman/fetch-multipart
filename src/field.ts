@@ -1,5 +1,5 @@
-import { multipart } from "./multipart.js";
-import { concatBytes } from "./util.js";
+import { multipart } from "./multipart.ts";
+import { concat as concatBytes } from "std/bytes";
 
 export interface FieldInit {
   headers?: HeadersInit;
@@ -14,7 +14,7 @@ export class Field implements Body {
 
   constructor(
     public body: ReadableStream<Uint8Array> | null = null,
-    init?: FieldInit
+    init?: FieldInit,
   ) {
     this.headers = new Headers(init?.headers);
   }
@@ -26,7 +26,7 @@ export class Field implements Body {
 
     if (this.bodyUsed) {
       throw new Error(
-        "Failed to execute 'clone' on 'Field': Response body is already used"
+        "Failed to execute 'clone' on 'Field': Response body is already used",
       );
     }
 
@@ -42,7 +42,7 @@ export class Field implements Body {
 
     if (this.bodyUsed) {
       throw new TypeError(
-        "Failed to execute 'arrayBuffer' on 'Field': body stream already read"
+        "Failed to execute 'arrayBuffer' on 'Field': body stream already read",
       );
     }
 
@@ -62,7 +62,7 @@ export class Field implements Body {
       const buf = new ArrayBuffer(arr.length);
       const view = new Uint8Array(buf);
       for (let i = 0; i < arr.length; i++) {
-        view[i] = arr[i];
+        view[i]! = arr[i]!;
       }
 
       return buf;
@@ -72,7 +72,7 @@ export class Field implements Body {
   public async text() {
     if (this.bodyUsed) {
       throw new Error(
-        "Failed to execute 'text' on 'Field': Response body is already used"
+        "Failed to execute 'text' on 'Field': Response body is already used",
       );
     }
 
@@ -87,7 +87,7 @@ export class Field implements Body {
   public async json() {
     if (this.bodyUsed) {
       throw new Error(
-        "Failed to execute 'json' on 'Field': Response body is already used"
+        "Failed to execute 'json' on 'Field': Response body is already used",
       );
     }
 
@@ -98,7 +98,7 @@ export class Field implements Body {
   public async blob() {
     if (this.bodyUsed) {
       throw new Error(
-        "Failed to execute 'blob' on 'Field': Response body is already used"
+        "Failed to execute 'blob' on 'Field': Response body is already used",
       );
     }
 
