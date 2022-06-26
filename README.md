@@ -43,7 +43,6 @@ for await (const field of fields) {
   await field.json(); // Read the field's body as JSON
   await streamUpload(field.body); // Access the body stream directly. eg. to stream to storage
 }
-
 ```
 
 ## Prior art
