@@ -32,37 +32,18 @@ You can also handle nested multipart bodies by calling the `.multipart()` method
 
 ## Usage
 
-Here's an example use case with the Service Workers API (eg. Cloudflare Workers):
-
 ```js
 import { multipart } from "response-multipart";
-import { uploadImageToStorage } from "my-storage-provider";
 
-addEventListener("fetch", (event) => {
-  event.respondWith(handleRequest(event.request));
-});
+const fields = await fetch('/api').then(multipart);
 
-async function handleRequest(request) {
-  for await (const field of multipart(request)) {
-    const name = headerValue(field.headers.get("Content-Disposition"), "name");
-    await uploadImageToStorage(name, field.body);
-  }
-
-  return new Response("OK")
+for await (const field of fields) {
+  field.headers.get("content-disposition"); // read the headers for this part
+  await field.arrayBuffer(); // Read the field's body in an ArrayBuffer
+  await field.json(); // Read the field's body as JSON
+  await streamUpload(field.body); // Access the body stream directly. eg. to stream to storage
 }
 
-// Extract a value from a string like "foo=bar; baz=buz"
-function headerValue(header, valueKey) {
-  const entries = header.split(";");
-
-  for (const entry of entries) {
-    const [key, value] = entry.trim().split("=");
-
-    if (value && valueKey == key) {
-      return value;
-    }
-  }
-}
 ```
 
 ## Prior art
