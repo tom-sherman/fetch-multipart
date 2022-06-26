@@ -9,18 +9,17 @@ const charsetRegex = /charset=([^()<>@,;:\"/[\]?.=\s]*)/i;
 
 // TODO: Investigate performance of this class.
 export class Field implements Body {
-  // TODO: Make these properties throw error on set
-  readonly headers: Headers;
-  bodyUsed = false;
-  body: ReadableStream<Uint8Array> | null;
+  #headers: Headers;
+  #bodyUsed = false;
+  #body: ReadableStream<Uint8Array> | null;
 
   constructor(
     // TODO: Should accept BodyInit
     body: ReadableStream<Uint8Array> | Uint8Array | null = null,
     init?: FieldInit,
   ) {
-    this.headers = new Headers(init?.headers);
-    this.body = body instanceof ReadableStream
+    this.#headers = new Headers(init?.headers);
+    this.#body = body instanceof ReadableStream
       ? body
       : body
       ? new ReadableStream<Uint8Array>({
@@ -32,35 +31,45 @@ export class Field implements Body {
       : null;
   }
 
+  get body(): ReadableStream<Uint8Array> | null {
+    return this.#body;
+  }
+  get headers(): Headers {
+    return this.#headers;
+  }
+  get bodyUsed(): boolean {
+    return this.#bodyUsed;
+  }
+
   clone(): Field {
-    if (!this.body) {
-      return new Field(this.body, this);
+    if (!this.#body) {
+      return new Field(this.#body, this);
     }
 
-    if (this.bodyUsed) {
+    if (this.#bodyUsed) {
       throw new Error(
         "Failed to execute 'clone' on 'Field': Response body is already used",
       );
     }
 
-    const [newBody, clonedBody] = this.body.tee();
-    this.body = newBody;
+    const [newBody, clonedBody] = this.#body.tee();
+    this.#body = newBody;
     return new Field(clonedBody, this);
   }
 
   arrayBuffer() {
-    if (!this.body) {
+    if (!this.#body) {
       return Promise.resolve(new ArrayBuffer(0));
     }
 
-    if (this.bodyUsed) {
+    if (this.#bodyUsed) {
       throw new TypeError(
         "Failed to execute 'arrayBuffer' on 'Field': body stream already read",
       );
     }
 
-    this.bodyUsed = true;
-    const reader = this.body.getReader();
+    this.#bodyUsed = true;
+    const reader = this.#body.getReader();
 
     return Promise.resolve().then(async () => {
       let arr: Uint8Array = new Uint8Array();
@@ -83,7 +92,7 @@ export class Field implements Body {
   }
 
   async text() {
-    if (this.bodyUsed) {
+    if (this.#bodyUsed) {
       throw new Error(
         "Failed to execute 'text' on 'Field': Response body is already used",
       );
@@ -98,7 +107,7 @@ export class Field implements Body {
   }
 
   async json() {
-    if (this.bodyUsed) {
+    if (this.#bodyUsed) {
       throw new Error(
         "Failed to execute 'json' on 'Field': Response body is already used",
       );
@@ -109,7 +118,7 @@ export class Field implements Body {
   }
 
   async blob() {
-    if (this.bodyUsed) {
+    if (this.#bodyUsed) {
       throw new Error(
         "Failed to execute 'blob' on 'Field': Response body is already used",
       );
