@@ -9,17 +9,30 @@ const charsetRegex = /charset=([^()<>@,;:\"/[\]?.=\s]*)/i;
 
 // TODO: Investigate performance of this class.
 export class Field implements Body {
-  public readonly headers: Headers;
-  public bodyUsed = false;
+  // TODO: Make these properties throw error on set
+  readonly headers: Headers;
+  bodyUsed = false;
+  body: ReadableStream<Uint8Array> | null;
 
   constructor(
-    public body: ReadableStream<Uint8Array> | null = null,
+    // TODO: Should accept BodyInit
+    body: ReadableStream<Uint8Array> | Uint8Array | null = null,
     init?: FieldInit,
   ) {
     this.headers = new Headers(init?.headers);
+    this.body = body instanceof ReadableStream
+      ? body
+      : body
+      ? new ReadableStream<Uint8Array>({
+        pull: (controller) => {
+          controller.enqueue(body);
+          controller.close();
+        },
+      })
+      : null;
   }
 
-  public clone(): Field {
+  clone(): Field {
     if (!this.body) {
       return new Field(this.body, this);
     }
@@ -35,7 +48,7 @@ export class Field implements Body {
     return new Field(clonedBody, this);
   }
 
-  public arrayBuffer() {
+  arrayBuffer() {
     if (!this.body) {
       return Promise.resolve(new ArrayBuffer(0));
     }
@@ -69,7 +82,7 @@ export class Field implements Body {
     });
   }
 
-  public async text() {
+  async text() {
     if (this.bodyUsed) {
       throw new Error(
         "Failed to execute 'text' on 'Field': Response body is already used",
@@ -84,7 +97,7 @@ export class Field implements Body {
     return new TextDecoder(charset).decode(buf);
   }
 
-  public async json() {
+  async json() {
     if (this.bodyUsed) {
       throw new Error(
         "Failed to execute 'json' on 'Field': Response body is already used",
@@ -95,7 +108,7 @@ export class Field implements Body {
     return JSON.parse(text);
   }
 
-  public async blob() {
+  async blob() {
     if (this.bodyUsed) {
       throw new Error(
         "Failed to execute 'blob' on 'Field': Response body is already used",
@@ -108,12 +121,12 @@ export class Field implements Body {
     });
   }
 
-  public async formData(): Promise<FormData> {
+  async formData(): Promise<FormData> {
     // TODO: Implement
     throw new Error("Not implemented");
   }
 
-  public multipart() {
+  multipart() {
     return multipart(this);
   }
 }
