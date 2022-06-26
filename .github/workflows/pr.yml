@@ -12,6 +12,15 @@ jobs:
           deno-version: v1.x
       - run: deno task check
 
+  Deno-Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      - run: deno lint
+
   Deno-Test:
     runs-on: ubuntu-latest
     steps:

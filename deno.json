@@ -10,5 +10,13 @@
     "check": "deno check src/mod.ts",
     "buildNpm": "deno run --allow-all scripts/buildNpm.ts",
     "test": "deno test test/"
+  },
+  "lint": {
+    "files": {
+      "exclude": [
+        "npm/",
+        "npm-test/"
+      ]
+    }
   }
 }

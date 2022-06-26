@@ -121,6 +121,7 @@ export class Field implements Body {
     });
   }
 
+  // deno-lint-ignore require-await
   async formData(): Promise<FormData> {
     // TODO: Implement
     throw new Error("Not implemented");
