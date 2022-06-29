@@ -1,6 +1,6 @@
 # response-multipart
 
-> **This libary is very WIP. It doesn't quite work yet...**
+> **This library is very WIP. It doesn't quite work yet...**
 
 Standards-inspired `multipart/*` parsing. It's like `response.text()` but for multipart bodies!
 
