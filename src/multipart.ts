@@ -1,4 +1,4 @@
-import { Field } from "./field.ts";
+import { BodyPart } from "./body-part.ts";
 import {
   collectAll,
   concatAll,
@@ -26,7 +26,7 @@ export interface MultipartInit {
 
 export async function* multipart(
   input: MultipartInit,
-): AsyncGenerator<Field, void> {
+): AsyncGenerator<BodyPart, void> {
   const body = input.body;
   if (!body) {
     throw new Error("Failed to fetch");
@@ -78,7 +78,7 @@ export async function* multipart(
   for (const part of [...parts, lastPartWithoutEndBoundary]) {
     const [headerBytes, bodyBytes] = sliceOn(part, RETURN_NEWLINE_2);
     // Slice off the last two bytes, which are /r/n
-    yield new Field(bodyBytes.slice(0, bodyBytes.byteLength - 2), {
+    yield new BodyPart(bodyBytes.slice(0, bodyBytes.byteLength - 2), {
       headers: parseHeaderBytes(headerBytes),
     });
   }

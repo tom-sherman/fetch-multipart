@@ -12,9 +12,9 @@ Standards-inspired `multipart/*` parsing. It's like `response.text()` but for mu
 
 ## API
 
-### `multipart(input: MultipartInput): AsyncGenerator<Field>>`
+### `multipart(input: MultipartInput): AsyncGenerator<BodyPart>>`
 
-Pass a `Request` or `Response` and receive an async iterator of `Field`s.
+Pass a `Request` or `Response` and receive an async iterator of `BodyPart`s.
 
 ### `MultipartInput`
 
@@ -22,11 +22,11 @@ A `Request`/`Response`-like object.
 
 Needs to have a `body` that is a `ReadableStream<Uint8Array> | null` and a `headers` of type `Headers`.
 
-### `Field`
+### `BodyPart`
 
-Conceptually multipart bodies are comprised of one or more "fields". Each field comprises a single part of the multipart body.
+Conceptually multipart bodies are comprised of one or more "body parts". Each body part comprises a single part of the multipart body.
 
-`Field` shares many properties and methods with `Response` eg. `.json()`, `.text()`, `.blob()`. You can also access the underlying stream via `.body` just as you would do with a `Response`.
+`BodyPart` shares many properties and methods with `Response` eg. `.json()`, `.text()`, `.blob()`. You can also access the underlying stream via `.body` just as you would do with a `Response`.
 
 You can also handle nested multipart bodies by calling the `.multipart()` method.
 
@@ -35,13 +35,13 @@ You can also handle nested multipart bodies by calling the `.multipart()` method
 ```js
 import { multipart } from "response-multipart";
 
-const fields = await fetch('/api').then(multipart);
+const parts = await fetch('/api').then(multipart);
 
-for await (const field of fields) {
-  field.headers.get("content-disposition"); // read the headers for this part
-  await field.arrayBuffer(); // Read the field's body in an ArrayBuffer
-  await field.json(); // Read the field's body as JSON
-  await streamUpload(field.body); // Access the body stream directly. eg. to stream to storage
+for await (const bodyPart of parts) {
+  bodyPart.headers.get("content-disposition"); // read the headers for this part
+  await bodyPart.arrayBuffer(); // Read the body part's body in an ArrayBuffer
+  await bodyPart.json(); // Read the body part's body as JSON
+  await streamUpload(bodyPart.body); // Access the body stream directly. eg. to stream to storage
 }
 ```
 

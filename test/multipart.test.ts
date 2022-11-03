@@ -9,7 +9,7 @@ async function collectAll<T>(iterator: AsyncIterable<T>): Promise<T[]> {
   return result;
 }
 
-Deno.test("can get field bodies with response and simple formdata", async () => {
+Deno.test("can get bodypart bodies with response and simple formdata", async () => {
   const fd = new FormData();
   fd.set("foo", "bar");
   fd.set("baz", "baz");
@@ -21,7 +21,7 @@ Deno.test("can get field bodies with response and simple formdata", async () => 
   assertEquals(await parts[1]!.text(), "baz");
 });
 
-Deno.test("can get field headers with response and simple formdata", async () => {
+Deno.test("can get bodypart headers with response and simple formdata", async () => {
   const fd = new FormData();
   fd.set("foo", "bar");
   fd.set("baz", "baz");

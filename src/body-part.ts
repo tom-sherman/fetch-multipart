@@ -1,21 +1,21 @@
 import { multipart } from "./multipart.ts";
 import { concat as concatBytes } from "std/bytes";
 
-export interface FieldInit {
+export interface BodyPartInit {
   headers?: HeadersInit;
 }
 
 const charsetRegex = /charset=([^()<>@,;:\"/[\]?.=\s]*)/i;
 
 // TODO: Investigate performance of this class.
-export class Field implements Body {
+export class BodyPart implements Body {
   #headers: Headers;
   #bodyUsed = false;
   #body: ReadableStream<Uint8Array> | null;
 
   constructor(
     body: BodyInit | null = null,
-    init?: FieldInit,
+    init?: BodyPartInit,
   ) {
     this.#headers = new Headers(init?.headers);
     this.#body = !body ? null : new Response(body).body;
@@ -31,20 +31,20 @@ export class Field implements Body {
     return this.#bodyUsed;
   }
 
-  clone(): Field {
+  clone(): BodyPart {
     if (!this.#body) {
-      return new Field(this.#body, this);
+      return new BodyPart(this.#body, this);
     }
 
     if (this.#bodyUsed) {
       throw new Error(
-        "Failed to execute 'clone' on 'Field': Response body is already used",
+        "Failed to execute 'clone' on 'BodyPart': Response body is already used",
       );
     }
 
     const [newBody, clonedBody] = this.#body.tee();
     this.#body = newBody;
-    return new Field(clonedBody, this);
+    return new BodyPart(clonedBody, this);
   }
 
   arrayBuffer() {
@@ -54,7 +54,7 @@ export class Field implements Body {
 
     if (this.#bodyUsed) {
       throw new TypeError(
-        "Failed to execute 'arrayBuffer' on 'Field': body stream already read",
+        "Failed to execute 'arrayBuffer' on 'BodyPart': body stream already read",
       );
     }
 
@@ -84,7 +84,7 @@ export class Field implements Body {
   async text() {
     if (this.#bodyUsed) {
       throw new Error(
-        "Failed to execute 'text' on 'Field': Response body is already used",
+        "Failed to execute 'text' on 'BodyPart': Response body is already used",
       );
     }
 
@@ -99,7 +99,7 @@ export class Field implements Body {
   async json() {
     if (this.#bodyUsed) {
       throw new Error(
-        "Failed to execute 'json' on 'Field': Response body is already used",
+        "Failed to execute 'json' on 'BodyPart': Response body is already used",
       );
     }
 
@@ -110,7 +110,7 @@ export class Field implements Body {
   async blob() {
     if (this.#bodyUsed) {
       throw new Error(
-        "Failed to execute 'blob' on 'Field': Response body is already used",
+        "Failed to execute 'blob' on 'BodyPart': Response body is already used",
       );
     }
 

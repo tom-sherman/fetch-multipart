@@ -1,4 +1,4 @@
 export { multipart } from "./multipart.ts";
 
-export type { FieldInit } from "./field.ts";
-export { Field } from "./field.ts";
+export type { BodyPartInit } from "./body-part.ts";
+export { BodyPart } from "./body-part.ts";
