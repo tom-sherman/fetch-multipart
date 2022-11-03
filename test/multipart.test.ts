@@ -17,8 +17,8 @@ Deno.test("can get field bodies with response and simple formdata", async () => 
   const parts = await collectAll(multipart(response));
 
   assertEquals(parts.length, 2);
-  assertEquals(await parts[0]?.text(), "bar");
-  assertEquals(await parts[1]?.text(), "baz");
+  assertEquals(await parts[0]!.text(), "bar");
+  assertEquals(await parts[1]!.text(), "baz");
 });
 
 Deno.test("can get field headers with response and simple formdata", async () => {

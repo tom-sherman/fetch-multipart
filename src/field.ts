@@ -14,21 +14,11 @@ export class Field implements Body {
   #body: ReadableStream<Uint8Array> | null;
 
   constructor(
-    // TODO: Should accept BodyInit
-    body: ReadableStream<Uint8Array> | Uint8Array | null = null,
+    body: BodyInit | null = null,
     init?: FieldInit,
   ) {
     this.#headers = new Headers(init?.headers);
-    this.#body = body instanceof ReadableStream
-      ? body
-      : body
-      ? new ReadableStream<Uint8Array>({
-        pull: (controller) => {
-          controller.enqueue(body);
-          controller.close();
-        },
-      })
-      : null;
+    this.#body = !body ? null : new Response(body).body;
   }
 
   get body(): ReadableStream<Uint8Array> | null {
