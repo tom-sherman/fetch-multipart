@@ -1,4 +1,4 @@
-# response-multipart
+# fetch-multipart
 
 > **This library is very WIP. It doesn't quite work yet...**
 
@@ -33,7 +33,7 @@ You can also handle nested multipart bodies by calling the `.multipart()` method
 ## Usage
 
 ```js
-import { multipart } from "response-multipart";
+import { multipart } from "fetch-multipart";
 
 const parts = await fetch('/api').then(multipart);
 
