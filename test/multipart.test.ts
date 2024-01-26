@@ -38,3 +38,37 @@ Deno.test("can get bodypart headers with response and simple formdata", async ()
     'form-data; name="baz"',
   );
 });
+
+Deno.test("preamble is ignored", async () => {
+  const formData = new FormData();
+  formData.append("a", "b");
+  formData.append("c", "10");
+  const response = new Response(formData);
+
+  const parts = await collectAll(multipart(
+    new Response("this is a preamble\r\n" + await response.text(), {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type")!,
+      },
+    }),
+  ));
+
+  assertEquals(parts.length, 2);
+});
+
+Deno.test("epilogue is ignored", async () => {
+  const formData = new FormData();
+  formData.append("a", "b");
+  formData.append("c", "10");
+  const response = new Response(formData);
+
+  const parts = await collectAll(multipart(
+    new Response(await response.text() + "\r\nthis is an epilogue", {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type")!,
+      },
+    }),
+  ));
+
+  assertEquals(parts.length, 2);
+});
