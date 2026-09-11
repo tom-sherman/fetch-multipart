@@ -1,50 +1,58 @@
-import { assertEquals, assertThrows } from "std/testing/asserts";
+import { test } from "node:test";
+import assert from "node:assert/strict";
 import { BodyPart } from "../src/mod.ts";
 
-Deno.test("errors when setting to headers, body, or bodyUsed", () => {
+test("errors when setting to headers, body, or bodyUsed", () => {
   const bodyPart = new BodyPart();
 
-  assertThrows(() => {
+  assert.throws(() => {
     // @ts-expect-error .
     bodyPart.headers = new Headers();
   }, TypeError);
 
-  assertThrows(() => {
+  assert.throws(() => {
     // @ts-expect-error .
     bodyPart.body = new ReadableStream();
   }, TypeError);
 
-  assertThrows(() => {
+  assert.throws(() => {
     // @ts-expect-error .
     bodyPart.bodyUsed = true;
   }, TypeError);
 });
 
-Deno.test("can construct bodypart from text", async () => {
-  assertEquals(await new BodyPart("hello").text(), "hello");
+test("can construct bodypart from text", async () => {
+  assert.equal(await new BodyPart("hello").text(), "hello");
 });
 
-Deno.test("can construct bodypart from text-like", async () => {
+test("can construct bodypart from text-like", async () => {
   const body = 1 as unknown as string;
-  assertEquals(await new BodyPart(body).text(), "1");
+  assert.equal(await new BodyPart(body).text(), "1");
 });
 
-Deno.test("can construct bodypart from uint8array", async () => {
+test("can construct bodypart from uint8array", async () => {
   const body = new TextEncoder().encode("hello");
-  assertEquals(await new BodyPart(body).text(), "hello");
+  assert.equal(await new BodyPart(body).text(), "hello");
 });
 
-Deno.test("can construct bodypart from arraybuffer", async () => {
+test("can construct bodypart from arraybuffer", async () => {
   const body = new TextEncoder().encode("hello").buffer;
-  assertEquals(await new BodyPart(body).text(), "hello");
+  assert.equal(await new BodyPart(body).text(), "hello");
 });
 
-Deno.test("can construct bodypart from blob", async () => {
+test("can construct bodypart from blob", async () => {
   const body = new Blob(["hello"]);
-  assertEquals(await new BodyPart(body).text(), "hello");
+  assert.equal(await new BodyPart(body).text(), "hello");
 });
 
-Deno.test("can construct bodypart from urlsearchparams", async () => {
+test("can construct bodypart from urlsearchparams", async () => {
   const body = new URLSearchParams("foo=bar&baz=baz");
-  assertEquals(await new BodyPart(body).text(), "foo=bar&baz=baz");
+  assert.equal(await new BodyPart(body).text(), "foo=bar&baz=baz");
+});
+
+test("can read bodypart as bytes", async () => {
+  assert.deepEqual(
+    await new BodyPart("hello").bytes(),
+    new TextEncoder().encode("hello"),
+  );
 });

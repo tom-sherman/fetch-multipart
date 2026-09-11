@@ -1,5 +1,5 @@
 import { multipart } from "./multipart.ts";
-import { concat as concatBytes } from "std/bytes";
+import { concat as concatBytes } from "./util.ts";
 
 export interface BodyPartInit {
   headers?: HeadersInit;
@@ -11,17 +11,14 @@ const charsetRegex = /charset=([^()<>@,;:\"/[\]?.=\s]*)/i;
 export class BodyPart implements Body {
   #headers: Headers;
   #bodyUsed = false;
-  #body: ReadableStream<Uint8Array> | null;
+  #body: ReadableStream<Uint8Array<ArrayBuffer>> | null;
 
-  constructor(
-    body: BodyInit | null = null,
-    init?: BodyPartInit,
-  ) {
+  constructor(body: BodyInit | null = null, init?: BodyPartInit) {
     this.#headers = new Headers(init?.headers);
     this.#body = !body ? null : new Response(body).body;
   }
 
-  get body(): ReadableStream<Uint8Array> | null {
+  get body(): ReadableStream<Uint8Array<ArrayBuffer>> | null {
     return this.#body;
   }
   get headers(): Headers {
@@ -81,6 +78,17 @@ export class BodyPart implements Body {
     });
   }
 
+  async bytes(): Promise<Uint8Array<ArrayBuffer>> {
+    if (this.#bodyUsed) {
+      throw new Error(
+        "Failed to execute 'bytes' on 'BodyPart': Response body is already used",
+      );
+    }
+
+    const buf = await this.arrayBuffer();
+    return new Uint8Array(buf);
+  }
+
   async text() {
     if (this.#bodyUsed) {
       throw new Error(
@@ -120,7 +128,6 @@ export class BodyPart implements Body {
     });
   }
 
-  // deno-lint-ignore require-await
   async formData(): Promise<FormData> {
     // TODO: Implement
     throw new Error("Not implemented");

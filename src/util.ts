@@ -1,4 +1,26 @@
-import { indexOfNeedle as indexOfNeedleBytes } from "std/bytes";
+export function indexOfNeedle(
+  source: Uint8Array,
+  needle: Uint8Array,
+  start = 0,
+): number {
+  if (needle.length === 0) {
+    return start <= source.length ? start : -1;
+  }
+  const first = needle[0]!;
+  const last = source.length - needle.length;
+  outer: for (let i = start; i <= last; i++) {
+    if (source[i] !== first) continue;
+    for (let j = 1; j < needle.length; j++) {
+      if (source[i + j] !== needle[j]) continue outer;
+    }
+    return i;
+  }
+  return -1;
+}
+
+export function concat(...buf: Uint8Array[]): Uint8Array {
+  return concatAll(buf);
+}
 
 export async function* streamAsyncIterator<T>(
   stream: ReadableStream<T>,
@@ -40,7 +62,7 @@ export function sliceOn(
   bytes: Uint8Array,
   needle: Uint8Array,
 ): [Uint8Array, Uint8Array] {
-  const index = indexOfNeedleBytes(bytes, needle);
+  const index = indexOfNeedle(bytes, needle);
   if (index === -1) {
     return [bytes, new Uint8Array()];
   }
