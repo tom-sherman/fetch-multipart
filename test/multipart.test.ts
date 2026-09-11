@@ -131,3 +131,39 @@ test("rejects a body with no close delimiter", async () => {
 
   await assert.rejects(collectAll(multipart(response)));
 });
+
+test("a near-miss delimiter inside part data is treated as data", async () => {
+  // RFC 2046 §5.1.1: CRLF--boundary is only a delimiter when followed by "--"
+  // or transport-padding CRLF. Anything else is part data (issue #12).
+  const body = [
+    "--b",
+    "",
+    "one",
+    "--bQQ",
+    "--b-QQ",
+    "--b\rQQ",
+    "--b",
+    "",
+    "two",
+    "--b--",
+  ].join("\r\n");
+  const response = new Response(body, {
+    headers: { "content-type": "multipart/mixed; boundary=b" },
+  });
+  const parts = await collectAll(multipart(response));
+
+  assert.deepEqual(await Promise.all(parts.map((p) => p.text())), [
+    "one\r\n--bQQ\r\n--b-QQ\r\n--b\rQQ",
+    "two",
+  ]);
+});
+
+test("a near-miss dash-boundary at the start of the body is preamble", async () => {
+  const body = ["--bQQ", "--b", "", "one", "--b--"].join("\r\n");
+  const response = new Response(body, {
+    headers: { "content-type": "multipart/mixed; boundary=b" },
+  });
+  const parts = await collectAll(multipart(response));
+
+  assert.deepEqual(await Promise.all(parts.map((p) => p.text())), ["one"]);
+});
