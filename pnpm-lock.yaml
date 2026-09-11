@@ -166,9 +166,24 @@ importers:
 
   .:
     devDependencies:
+      '@fastify/busboy':
+        specifier: ^3.2.2
+        version: 3.2.2
+      '@remix-run/multipart-parser':
+        specifier: ^0.16.4
+        version: 0.16.4
+      '@types/busboy':
+        specifier: ^1.5.4
+        version: 1.5.4
       '@types/node':
         specifier: ^26.5.1
         version: 26.5.1
+      busboy:
+        specifier: ^1.6.0
+        version: 1.6.0
+      multipasta:
+        specifier: ^0.2.8
+        version: 0.2.8
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
@@ -180,6 +195,18 @@ importers:
         version: 2.9.0
 
 packages:
+
+  '@fastify/busboy@3.2.2':
+    resolution: {integrity: sha512-yXSS27qPExaXeuLvMRMXOLtpipzfQYNjG3FkunDWKGfMYjKuhFXko9CVzqxm8jcF+lmtS9Fd89QNdh9XDjnbNg==}
+
+  '@remix-run/headers@0.21.1':
+    resolution: {integrity: sha512-DRhRveigepAQDUIi0MrOFhpcl3/KTv/fkpIhulv7Asv1pUwM8RpY2ENjdI8lfii6Z3MEsWtYhGt6If8bi6bYpQ==}
+
+  '@remix-run/multipart-parser@0.16.4':
+    resolution: {integrity: sha512-XrrfbuU4csgEpTmHv9rjrnFrGu/7iz+31PM51cFL2fcu/JZ7+wZhDyqaOca2uOE8qNhVgXuJHqEOl/8eFCYTHQ==}
+
+  '@types/busboy@1.5.4':
+    resolution: {integrity: sha512-kG7WrUuAKK0NoyxfQHsVE6j1m01s6kMma64E+OZenQABMQyTJop1DumUWcLwAQ2JzpefU7PDYoRDKl8uZosFjw==}
 
   '@types/node@26.5.1':
     resolution: {integrity: sha512-CzNm2FezW4VR/LjG6yUdiEgLE/rAQ9Slj5gCu/C2VrdcW7I0ahNZ8DRbHT7zOZ6r3ONgd/bsQIeSaoDGrd1C6g==}
@@ -304,10 +331,21 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  busboy@1.6.0:
+    resolution: {integrity: sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==}
+    engines: {node: '>=10.16.0'}
+
+  multipasta@0.2.8:
+    resolution: {integrity: sha512-ZPWuMKyv0cSO29f7hozp+k6+crZbQijV8ipMvxNxRf2SwtYGTX1ZX89Kd20VV4H9Znonx+EQn+iy1wGQsJ+b+Q==}
+
   prettier@3.9.6:
     resolution: {integrity: sha512-OpN0zzVdiaiAhxpuuj5efpIS4sY9j7bY6uR5mnj5yPzGkdkjNKSJeUThPb60Jw29QuAZgA4o+/iB49kFiaBX6g==}
     engines: {node: '>=14'}
     hasBin: true
+
+  streamsearch@1.1.0:
+    resolution: {integrity: sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==}
+    engines: {node: '>=10.0.0'}
 
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
@@ -323,6 +361,18 @@ packages:
     hasBin: true
 
 snapshots:
+
+  '@fastify/busboy@3.2.2': {}
+
+  '@remix-run/headers@0.21.1': {}
+
+  '@remix-run/multipart-parser@0.16.4':
+    dependencies:
+      '@remix-run/headers': 0.21.1
+
+  '@types/busboy@1.5.4':
+    dependencies:
+      '@types/node': 26.5.1
 
   '@types/node@26.5.1':
     dependencies:
@@ -388,7 +438,15 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
+  busboy@1.6.0:
+    dependencies:
+      streamsearch: 1.1.0
+
+  multipasta@0.2.8: {}
+
   prettier@3.9.6: {}
+
+  streamsearch@1.1.0: {}
 
   typescript@7.0.2:
     optionalDependencies:

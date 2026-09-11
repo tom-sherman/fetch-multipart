@@ -21,11 +21,19 @@
     "check": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json",
     "test": "node --test",
+    "bench": "node ./bench/runner.ts",
+    "bench:profile": "node --cpu-prof --heap-prof ./bench/runner.ts",
+    "bench:steady": "node --expose-gc ./bench/runner.ts --steady --metrics",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@fastify/busboy": "^3.2.2",
+    "@remix-run/multipart-parser": "^0.16.4",
+    "@types/busboy": "^1.5.4",
     "@types/node": "^26.5.1",
+    "busboy": "^1.6.0",
+    "multipasta": "^0.2.8",
     "prettier": "^3.9.6",
     "typescript": "^7.0.2",
     "yaml": "^2.9.0"
