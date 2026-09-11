@@ -24,16 +24,7 @@ const fixturesDir = new URL(
  * entry has to be removed. Fix the parser, delete the name, repeat until the
  * set is empty.
  */
-const KNOWN_FAILURES = new Set<string>([
-  // https://github.com/tom-sherman/fetch-multipart/issues/14
-  // These expect Content-Transfer-Encoding (base64 / quoted-printable) to be
-  // decoded, which python-multipart does. RFC 7578 §4.7 deprecates it for
-  // multipart/form-data; whether to honour it here is an open decision.
-  "base64_encoding",
-  "mixed_case_headers",
-  "mixed_plain_and_base64_encoding",
-  "quoted_printable_encoding",
-]);
+const KNOWN_FAILURES = new Set<string>([]);
 
 interface ExpectedPart {
   name: string;

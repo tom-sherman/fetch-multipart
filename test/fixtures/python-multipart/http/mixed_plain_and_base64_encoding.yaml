@@ -3,7 +3,7 @@ expected:
   - name: field1
     type: field
     data: !!binary |
-      VGVzdCAxMjM=
+      VkdWemRDQXhNak09
   - name: field2
     type: field
     data: !!binary |
@@ -11,7 +11,7 @@ expected:
   - name: field3
     type: field
     data: !!binary |
-      VGVzdCBzdHJpbmcuCg==
+      VkdWemRDQnpkSEpwYm1jdUNnPT0=
   - name: field4
     type: field
     data: !!binary |
