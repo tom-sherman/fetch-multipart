@@ -61,10 +61,10 @@ export function concatAll(buf: Uint8Array[]) {
 export function sliceOn(
   bytes: Uint8Array,
   needle: Uint8Array,
-): [Uint8Array, Uint8Array] {
+): [Uint8Array<ArrayBuffer>, Uint8Array<ArrayBuffer>] {
   const index = indexOfNeedle(bytes, needle);
   if (index === -1) {
-    return [bytes, new Uint8Array()];
+    return [bytes.slice(), new Uint8Array()];
   }
 
   return [bytes.slice(0, index), bytes.slice(index + needle.byteLength)];
@@ -78,19 +78,14 @@ export async function collectAll<T>(iterator: AsyncIterable<T>): Promise<T[]> {
   return result;
 }
 
-export function split(bytes: Uint8Array, needle: Uint8Array): Uint8Array[] {
-  const result: Uint8Array[] = [];
-  let index = 0;
-  while (true) {
-    const [slice, rest] = sliceOn(bytes.slice(index), needle);
-    if (slice.length > 0) {
-      result.push(slice);
-    }
-    if (rest.length === 0) {
-      break;
-    }
-    index += slice.length + needle.length;
+export function startsWith(bytes: Uint8Array, prefix: Uint8Array): boolean {
+  if (prefix.length > bytes.length) {
+    return false;
   }
-
-  return result;
+  for (let i = 0; i < prefix.length; i++) {
+    if (bytes[i] !== prefix[i]) {
+      return false;
+    }
+  }
+  return true;
 }
