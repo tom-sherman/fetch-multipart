@@ -35,7 +35,7 @@ You can also handle nested multipart bodies by calling the `.multipart()` method
 ```js
 import { multipart } from "fetch-multipart";
 
-const parts = await fetch('/api').then(multipart);
+const parts = await fetch("/api").then(multipart);
 
 for await (const bodyPart of parts) {
   bodyPart.headers.get("content-disposition"); // read the headers for this part

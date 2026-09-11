@@ -1,15 +1,13 @@
 import { BodyPart } from "./body-part.ts";
 import {
   collectAll,
+  concat as concatBytes,
   concatAll,
+  indexOfNeedle as indexOfNeedleBytes,
   sliceOn,
   split,
   streamAsyncIterator,
 } from "./util.ts";
-import {
-  concat as concatBytes,
-  indexOfNeedle as indexOfNeedleBytes,
-} from "std/bytes";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -43,10 +41,7 @@ export async function* multipart(
     throw new Error("Failed to fetch");
   }
 
-  const startBoundaryBytes = concatBytes(
-    DASHSASH,
-    boundaryByte,
-  );
+  const startBoundaryBytes = concatBytes(DASHSASH, boundaryByte);
   const endBoundaryBytes = concatBytes(startBoundaryBytes, DASHSASH);
 
   const bodyBytes = concatAll(await collectAll(streamAsyncIterator(body)));
@@ -61,19 +56,13 @@ export async function* multipart(
     throw new Error("Failed to fetch");
   }
 
-  const endBoundaryIndex = indexOfNeedleBytes(
-    lastPart,
-    endBoundaryBytes,
-  );
+  const endBoundaryIndex = indexOfNeedleBytes(lastPart, endBoundaryBytes);
 
   if (endBoundaryIndex < 0) {
     throw new Error("Failed to fetch");
   }
 
-  const lastPartWithoutEndBoundary = lastPart.slice(
-    0,
-    endBoundaryIndex,
-  );
+  const lastPartWithoutEndBoundary = lastPart.slice(0, endBoundaryIndex);
 
   for (const part of [...parts, lastPartWithoutEndBoundary]) {
     const [headerBytes, bodyBytes] = sliceOn(part, RETURN_NEWLINE_2);

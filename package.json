@@ -1,0 +1,32 @@
+{
+  "name": "fetch-multipart",
+  "version": "0.0.0",
+  "description": "Standards-inspired multipart/* parsing. Like response.text() but for multipart bodies.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.4.1",
+  "engines": {
+    "node": ">=26"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/mod.d.ts",
+      "default": "./dist/mod.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "prettier": "^3.9.6",
+    "typescript": "^7.0.2"
+  }
+}

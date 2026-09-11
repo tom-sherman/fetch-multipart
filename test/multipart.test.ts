@@ -1,5 +1,6 @@
 import { multipart } from "../src/mod.ts";
-import { assertEquals } from "std/testing/asserts";
+import { test } from "node:test";
+import assert from "node:assert/strict";
 
 async function collectAll<T>(iterator: AsyncIterable<T>): Promise<T[]> {
   const result: T[] = [];
@@ -9,31 +10,31 @@ async function collectAll<T>(iterator: AsyncIterable<T>): Promise<T[]> {
   return result;
 }
 
-Deno.test("can get bodypart bodies with response and simple formdata", async () => {
+test("can get bodypart bodies with response and simple formdata", async () => {
   const fd = new FormData();
   fd.set("foo", "bar");
   fd.set("baz", "baz");
   const response = new Response(fd);
   const parts = await collectAll(multipart(response));
 
-  assertEquals(parts.length, 2);
-  assertEquals(await parts[0]!.text(), "bar");
-  assertEquals(await parts[1]!.text(), "baz");
+  assert.equal(parts.length, 2);
+  assert.equal(await parts[0]!.text(), "bar");
+  assert.equal(await parts[1]!.text(), "baz");
 });
 
-Deno.test("can get bodypart headers with response and simple formdata", async () => {
+test("can get bodypart headers with response and simple formdata", async () => {
   const fd = new FormData();
   fd.set("foo", "bar");
   fd.set("baz", "baz");
   const response = new Response(fd);
   const parts = await collectAll(multipart(response));
 
-  assertEquals(parts.length, 2);
-  assertEquals(
+  assert.equal(parts.length, 2);
+  assert.equal(
     parts[0]!.headers.get("content-disposition"),
     'form-data; name="foo"',
   );
-  assertEquals(
+  assert.equal(
     parts[1]!.headers.get("content-disposition"),
     'form-data; name="baz"',
   );
