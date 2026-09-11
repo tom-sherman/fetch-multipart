@@ -167,3 +167,27 @@ test("a near-miss dash-boundary at the start of the body is preamble", async () 
 
   assert.deepEqual(await Promise.all(parts.map((p) => p.text())), ["one"]);
 });
+
+// Zero-part bodies. RFC 2046 §5.1 says a multipart body "must contain one or
+// more body parts", but an empty FormData serialises to a lone close delimiter
+// and Response.prototype.formData() accepts it, so we do too.
+// https://github.com/tom-sherman/fetch-multipart/issues/13
+
+test("yields no parts for an empty FormData", async () => {
+  const response = new Response(new FormData());
+  const parts = await collectAll(multipart(response));
+
+  assert.deepEqual(parts, []);
+});
+
+test("yields no parts for a preamble followed by a close delimiter", async () => {
+  // e.g. a mistyped first delimiter: everything up to the close delimiter is
+  // preamble, and there is nothing after it.
+  const body = ["--c", "", "not a part", "--b--"].join("\r\n");
+  const response = new Response(body, {
+    headers: { "content-type": "multipart/mixed; boundary=b" },
+  });
+  const parts = await collectAll(multipart(response));
+
+  assert.deepEqual(parts, []);
+});

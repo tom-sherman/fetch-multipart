@@ -30,3 +30,9 @@ Do not edit these files; re-vendor from upstream instead.
   key from the `field` part. That part has no `Content-Type` header in the
   body; upstream never asserts `content_type` for fields, so the key was
   unverified.
+- `http/bad_initial_boundary.{http,yaml}`: removed. The first delimiter is
+  mistyped, so per RFC 2046 §5.1.1 the whole body is preamble followed by a
+  close delimiter, i.e. zero parts. python-multipart rejects it (it doesn't
+  support preambles at all); we accept it and yield no parts, which is what
+  `Response.prototype.formData()` in Node/undici does with the same bytes. See
+  https://github.com/tom-sherman/fetch-multipart/issues/13.
