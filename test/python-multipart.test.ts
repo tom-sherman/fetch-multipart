@@ -25,13 +25,6 @@ const fixturesDir = new URL(
  * set is empty.
  */
 const KNOWN_FAILURES = new Set<string>([
-  // https://github.com/tom-sherman/fetch-multipart/issues/12
-  // A `--boundary` inside part data that isn't followed by CRLF or `--` is not
-  // a delimiter (RFC 2046 §5.1.1) and should be treated as data; the parser
-  // throws instead of resuming the search.
-  "almost_match_boundary_without_CR",
-  "almost_match_boundary_without_LF",
-  "almost_match_boundary_without_final_hyphen",
   // https://github.com/tom-sherman/fetch-multipart/issues/13
   // The first delimiter is mistyped, so the whole body is preamble ending in a
   // close delimiter. python-multipart rejects it; we yield zero parts.

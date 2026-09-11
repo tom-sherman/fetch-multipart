@@ -68,10 +68,13 @@ export async function* multipart(
   // Skip the preamble. The first dash-boundary is either at the very start of
   // the body (no preamble) or is preceded by a CRLF (i.e. it's a delimiter).
   let position: number;
-  if (startsWith(bodyBytes, dashBoundary)) {
+  if (
+    startsWith(bodyBytes, dashBoundary) &&
+    isDelimiterEnd(bodyBytes, dashBoundary.byteLength)
+  ) {
     position = dashBoundary.byteLength;
   } else {
-    const index = indexOfNeedleBytes(bodyBytes, delimiter);
+    const index = indexOfDelimiter(bodyBytes, delimiter, 0);
     if (index < 0) {
       throw new Error("Failed to fetch");
     }
@@ -79,7 +82,8 @@ export async function* multipart(
   }
 
   while (true) {
-    // `position` is immediately after a dash-boundary.
+    // `position` is immediately after a dash-boundary that is known to be
+    // followed by either "--" or transport-padding CRLF.
     if (bodyBytes[position] === DASH && bodyBytes[position + 1] === DASH) {
       // Close delimiter. Anything that follows is the epilogue, which is
       // ignored.
@@ -90,17 +94,10 @@ export async function* multipart(
     while (bodyBytes[position] === SPACE || bodyBytes[position] === TAB) {
       position++;
     }
-
-    if (bodyBytes[position] !== CR || bodyBytes[position + 1] !== LF) {
-      throw new Error("Failed to fetch");
-    }
+    // CRLF
     position += 2;
 
-    const nextDelimiterIndex = indexOfNeedleBytes(
-      bodyBytes,
-      delimiter,
-      position,
-    );
+    const nextDelimiterIndex = indexOfDelimiter(bodyBytes, delimiter, position);
     if (nextDelimiterIndex < 0) {
       // Every body-part must be followed by a delimiter, and the final one
       // must be followed by the close delimiter.
@@ -111,6 +108,35 @@ export async function* multipart(
 
     position = nextDelimiterIndex + delimiter.byteLength;
   }
+}
+
+// Finds the first delimiter at or after `from`. A `CRLF--boundary` is only a
+// delimiter when it's followed by "--" (close-delimiter) or transport-padding
+// CRLF; one followed by anything else is part data and the search continues
+// past it. The boundary cannot contain CR or LF, so a real delimiter can never
+// overlap a near-miss.
+function indexOfDelimiter(
+  bytes: Uint8Array,
+  delimiter: Uint8Array,
+  from: number,
+): number {
+  let index = indexOfNeedleBytes(bytes, delimiter, from);
+  while (index >= 0 && !isDelimiterEnd(bytes, index + delimiter.byteLength)) {
+    index = indexOfNeedleBytes(bytes, delimiter, index + delimiter.byteLength);
+  }
+  return index;
+}
+
+// Whether the bytes at `position` (immediately after a dash-boundary) are what
+// may follow one: "--" or transport-padding CRLF.
+function isDelimiterEnd(bytes: Uint8Array, position: number): boolean {
+  if (bytes[position] === DASH && bytes[position + 1] === DASH) {
+    return true;
+  }
+  while (bytes[position] === SPACE || bytes[position] === TAB) {
+    position++;
+  }
+  return bytes[position] === CR && bytes[position + 1] === LF;
 }
 
 // body-part := MIME-part-headers [CRLF *OCTET]
