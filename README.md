@@ -30,6 +30,16 @@ Conceptually multipart bodies are comprised of one or more "body parts". Each bo
 
 You can also handle nested multipart bodies by calling the `.multipart()` method.
 
+The body of a `BodyPart` is always the wire bytes. In particular, `Content-Transfer-Encoding` (`base64`, `quoted-printable`, …) is never applied, whatever the top-level `multipart/*` type — the same as `Response.formData()` in browsers. The header is available on `.headers` if you need to decode:
+
+```js
+if (
+  bodyPart.headers.get("content-transfer-encoding")?.toLowerCase() === "base64"
+) {
+  const decoded = Uint8Array.fromBase64(await bodyPart.text());
+}
+```
+
 ## Usage
 
 ```js

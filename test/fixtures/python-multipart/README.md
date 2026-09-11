@@ -36,3 +36,10 @@ Do not edit these files; re-vendor from upstream instead.
   support preambles at all); we accept it and yield no parts, which is what
   `Response.prototype.formData()` in Node/undici does with the same bytes. See
   https://github.com/tom-sherman/fetch-multipart/issues/13.
+- `http/base64_encoding.yaml`, `http/mixed_case_headers.yaml`,
+  `http/mixed_plain_and_base64_encoding.yaml`,
+  `http/quoted_printable_encoding.yaml`: `data` changed from the decoded
+  content to the bytes as they appear on the wire. Upstream decodes
+  `Content-Transfer-Encoding` (base64 / quoted-printable); we never do, for
+  any `multipart/*` type, matching `Response.formData()` in browsers. See
+  https://github.com/tom-sherman/fetch-multipart/issues/14.

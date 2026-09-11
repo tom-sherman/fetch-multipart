@@ -191,3 +191,32 @@ test("yields no parts for a preamble followed by a close delimiter", async () =>
 
   assert.deepEqual(parts, []);
 });
+
+// https://github.com/tom-sherman/fetch-multipart/issues/14
+// Content-Transfer-Encoding is never applied; the header is exposed and the
+// body is the wire bytes, whatever the top-level multipart type.
+for (const type of ["multipart/form-data", "multipart/mixed"]) {
+  test(`does not decode Content-Transfer-Encoding in ${type}`, async () => {
+    const body = [
+      "--b",
+      'Content-Disposition: form-data; name="file"; filename="test.txt"',
+      "Content-Type: text/plain",
+      "Content-Transfer-Encoding: base64",
+      "",
+      "VGVzdCAxMjM=",
+      "--b--",
+      "",
+    ].join("\r\n");
+    const parts = await collectAll(
+      multipart(
+        new Response(body, {
+          headers: { "content-type": `${type}; boundary=b` },
+        }),
+      ),
+    );
+
+    assert.equal(parts.length, 1);
+    assert.equal(parts[0]!.headers.get("content-transfer-encoding"), "base64");
+    assert.equal(await parts[0]!.text(), "VGVzdCAxMjM=");
+  });
+}

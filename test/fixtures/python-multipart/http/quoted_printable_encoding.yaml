@@ -5,4 +5,4 @@ expected:
     file_name: test.txt
     content_type: 'text/plain'
     data: !!binary |
-        Zm9vPWJhcg==
+        Zm9vPTNEYmFy

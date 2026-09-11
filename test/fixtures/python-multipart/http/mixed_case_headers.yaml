@@ -3,12 +3,12 @@ expected:
   - name: field1
     type: field
     data: !!binary |
-      VGVzdCAxMjM=
+      VkdWemRDQXhNak09
   - name: field2
     type: field
     data: !!binary |
-      VGVzdCAxMjM=
+      VkdWemRDQXhNak09
   - name: Field3
     type: field
     data: !!binary |
-      VGVzdCAxMjM=
+      VkdWemRDQXhNak09
