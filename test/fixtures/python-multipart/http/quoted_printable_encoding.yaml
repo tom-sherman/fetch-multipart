@@ -1,0 +1,8 @@
+boundary: --boundary
+expected:
+  - name: file
+    type: file
+    file_name: test.txt
+    content_type: 'text/plain'
+    data: !!binary |
+        Zm9vPWJhcg==

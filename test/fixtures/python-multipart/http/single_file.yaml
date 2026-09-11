@@ -1,0 +1,9 @@
+boundary: ----WebKitFormBoundary5BZGOJCWtXGYC9HW
+expected:
+  - name: file
+    type: file
+    file_name: test.txt
+    content_type: 'text/plain'
+    data: !!binary |
+      VGhpcyBpcyBhIHRlc3QgZmlsZS4=
+
