@@ -27,6 +27,7 @@
   "devDependencies": {
     "@types/node": "^26.5.1",
     "prettier": "^3.9.6",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "yaml": "^2.9.0"
   }
 }
